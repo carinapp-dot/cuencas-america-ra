@@ -26,9 +26,9 @@ button{font:inherit}
 .cardhead{display:flex;align-items:flex-start;gap:.6rem}.card h2{margin:.1rem 0 .4rem;line-height:1.05}.close{margin-left:auto;border:0;border-radius:999px;width:42px;height:42px;background:#17323e;color:white;font-weight:900;font-size:1.2rem}
 .fact{background:#e5f6fb;border-left:5px solid var(--blue);padding:.75rem;border-radius:10px;margin:.7rem 0}
 .curio{background:#fff0b9;border-left:5px solid #d39200;padding:.75rem;border-radius:10px;margin:.7rem 0}
-.listen,.collect,.next{width:100%;border:0;border-radius:12px;padding:.8rem;margin-top:.55rem;font-weight:900}.listen{background:#d9edf7}.collect{background:#dff4e8;color:#125b3c}.next{background:var(--gold)}
+.listen,.satellite,.collect,.next{width:100%;border:0;border-radius:12px;padding:.8rem;margin-top:.55rem;font-weight:900}.listen{background:#d9edf7}.satellite{background:#d9e5ff;color:#15354a}.collect{background:#dff4e8;color:#125b3c}.next{background:var(--gold)}
 .quiz{display:none}.quiz.open{display:block}.qbox{background:white;border-radius:14px;padding:.8rem;margin:.7rem 0;border:1px solid #ccb98d}.opt{display:block;width:100%;text-align:left;margin:.45rem 0;padding:.7rem;border-radius:10px;border:1px solid #9db2bb;background:#f8fcfd}.opt.correct{background:#dff4e8;border-color:#4c9}.opt.wrong{background:#fde4e4;border-color:#d77}.feedback{font-weight:750;min-height:1.5em}.badge{text-align:center;font-size:1.1rem;font-weight:900;background:#fff0b9;border-radius:14px;padding:1rem;margin-top:1rem}
-.small{font-size:.9rem;opacity:.8}
+.small{font-size:.9rem;opacity:.8}.satprog{font-size:.76rem}.satdot{opacity:.22}.satdot.on{opacity:1}.satimg{width:100%;max-height:390px;object-fit:cover;border-radius:14px;border:2px solid #8099a5;margin:.6rem 0}.observe{background:#eef7ff;border-left:5px solid #4c75a3;padding:.75rem;border-radius:10px;margin:.7rem 0}.satq{background:white;border:1px solid #b9c8d0;border-radius:14px;padding:.8rem;margin:.8rem 0}.satopt{display:block;width:100%;text-align:left;margin:.45rem 0;padding:.7rem;border-radius:10px;border:1px solid #9db2bb;background:#f8fcfd}.satopt.correct{background:#dff4e8;border-color:#4c9}.satopt.wrong{background:#fde4e4;border-color:#d77}.evidence{background:#e6f7ec;border:2px solid #59a77b;border-radius:14px;padding:.8rem;font-weight:850;text-align:center;margin:.8rem 0}.sourcebtn{display:block;text-align:center;text-decoration:none;background:#17323e;color:white;border-radius:12px;padding:.75rem;margin-top:.55rem;font-weight:850}.missiondone{background:#fff0b9;border:2px solid #d39200;border-radius:14px;padding:1rem;text-align:center;font-weight:900;margin:.8rem 0}
 @media(min-width:800px){.actions{left:50%;right:auto;transform:translateX(-50%);width:min(760px,100%);border-radius:18px 18px 0 0}.modal{align-items:center}}
 </style>
 </head>
@@ -36,7 +36,7 @@ button{font:inherit}
 <div class="app">
   <div class="topbar">
     <div class="brand">🌎 MISIÓN: CUENCAS DE AMÉRICA</div>
-    <div class="drops" aria-label="progreso"><span class="drop">💧</span><span class="drop">💧</span><span class="drop">💧</span><span class="drop">💧</span><span class="drop">💧</span> <b id="count">0/5</b></div>
+    <div class="drops" aria-label="progreso"><span class="drop">💧</span><span class="drop">💧</span><span class="drop">💧</span><span class="drop">💧</span><span class="drop">💧</span> <b id="count">0/5</b><br><span class="satprog"><span class="satdot">🛰️</span><span class="satdot">🛰️</span><span class="satdot">🛰️</span><span class="satdot">🛰️</span><span class="satdot">🛰️</span> <b id="satCount">0/5</b></span></div>
   </div>
   <main class="hero">
     <div class="stage" id="stage">
@@ -60,7 +60,15 @@ button{font:inherit}
     <div class="cardhead"><div><div class="small">ESTACIÓN DEL EXPLORADOR</div><h2 id="title"></h2></div><button class="close" id="close" aria-label="Cerrar">×</button></div>
     <div id="content"></div>
     <button class="listen" id="listen">🔊 Escuchar explicación</button>
+    <button class="satellite" id="satellite">🛰️ Misión satelital</button>
     <button class="collect" id="collect">💧 Registrar esta cuenca</button>
+  </section>
+</div>
+
+<div class="modal" id="satModal" role="dialog" aria-modal="true">
+  <section class="card satcard">
+    <div class="cardhead"><div><div class="small">LABORATORIO DE OBSERVACIÓN</div><h2 id="satTitle">🛰️ Misión satelital</h2></div><button class="close" id="satClose" aria-label="Cerrar">×</button></div>
+    <div id="satContent"></div>
   </section>
 </div>
 
@@ -85,19 +93,43 @@ const basins={
  lakes:{title:"🧊 Grandes Lagos–San Lorenzo",speech:"Los Grandes Lagos forman una enorme red de agua dulce conectada con el río San Lorenzo. Una gota que entra en este sistema puede recorrer lagos y cursos fluviales hasta alcanzar el océano Atlántico. Este ejemplo permite comprender que lagos y ríos pueden integrar una misma red de drenaje y que los sistemas hidrográficos atraviesan fronteras políticas.",
  html:`<div class="fact"><b>🌊 Sistema:</b> Grandes Lagos → río San Lorenzo → Atlántico.<br><b>🗺️ Característica:</b> red compartida por Canadá y Estados Unidos.</div><div class="curio"><b>🔎 Dato del explorador:</b> los Grandes Lagos reúnen una parte extraordinariamente grande del agua dulce superficial del planeta.</div><p><b>🧠 Sigue la gota:</b> una gota del sistema puede terminar llegando al Atlántico por el San Lorenzo.</p>`}
 };
+const satellites={
+ amazon:{title:"🌳 Amazonas — Un río que cambia de lugar",image:"https://assets.science.nasa.gov/dynamicimage/assets/science/esd/eo/images/imagerecords/84000/84833/meanders_tm5_1985162_lrg.jpg?crop=faces%2Cfocalpoint&fit=clip&h=3000&w=2000",source:"https://science.nasa.gov/earth/earth-observatory/meandering-in-the-amazon-84833/",credit:"NASA Earth Observatory · Landsat 5",observe:["Seguí las grandes curvas del río: son meandros.","Buscá formas de media luna separadas del cauce actual: pueden ser antiguos meandros.","Compará el cauce con la llanura que lo rodea: el río modifica ese paisaje con el tiempo."],q:"¿Qué evidencia muestra que el río ha cambiado de recorrido?",opts:["La presencia de antiguos cauces y lagos en forma de media luna","Que todos los cursos son rectos","Que no existe vegetación cerca del río"],ans:0,feedback:"Los antiguos cauces y lagos de meandro son huellas de recorridos anteriores del río."},
+ orinoco:{title:"🐊 Orinoco — El pasadizo del Casiquiare",image:"https://assets.science.nasa.gov/content/dam/science/esd/eo/images/imagerecords/154000/154394/waterways_oli2_20250302.jpg/jcr%3Acontent/renditions/cq5dam.web.1280.1280.jpeg",source:"https://science.nasa.gov/earth/earth-observatory/when-rivers-take-a-weird-turn-154394/",credit:"NASA Earth Observatory · Landsat 9 · 2 mar 2025",observe:["Localizá el Orinoco en la imagen.","Buscá el curso que se separa del río principal: es el Casiquiare.","Seguí las flechas de dirección del agua y pensá hacia qué otro gran sistema se conecta."],q:"¿Qué hace extraordinario al Casiquiare?",opts:["Conecta naturalmente los sistemas del Orinoco y del Amazonas","Une el Orinoco con el océano Pacífico","Es un canal artificial construido para barcos"],ans:0,feedback:"Es una bifurcación natural que enlaza el sistema del Orinoco con el del Amazonas."},
+ plata:{title:"🇦🇷 Cuenca del Plata — El laberinto del Paraná",image:"https://assets.science.nasa.gov/dynamicimage/assets/science/esd/eo/images/imagerecords/2000/2354/landsat_art_parana_lrg.jpg?crop=faces%2Cfocalpoint&fit=clip&h=3529&w=3384",source:"https://science.nasa.gov/earth/earth-observatory/parana-river-delta-in-argentina-2354/",credit:"NASA/USGS · Landsat 7 · 26 may 2000 · falso color",observe:["Identificá el cauce principal por su color azul intenso.","Observá la gran cantidad de brazos, islas y humedales del delta.","Compará las formas naturales del delta con el patrón geométrico de las áreas agrícolas."],q:"¿Qué rasgo permite reconocer un delta en esta imagen?",opts:["El río se divide en numerosos brazos y canales","El río desaparece antes de llegar al estuario","El cauce atraviesa una cordillera nevada"],ans:0,feedback:"En el delta, el sistema se ramifica en numerosos brazos y canales entre islas y humedales."},
+ miss:{title:"🚢 Mississippi–Missouri — Huellas de un río viajero",image:"https://assets.science.nasa.gov/dynamicimage/assets/science/esd/eo/images/imagerecords/147000/147001/iss062e121160_lrg.jpg?crop=faces%2Cfocalpoint&fit=clip&h=3712&w=5568",source:"https://science.nasa.gov/earth/earth-observatory/meandering-mississippi-river-147001/",credit:"NASA Earth Observatory · fotografía ISS · 2 abr 2020",observe:["Seguí las curvas del Mississippi a través de la llanura.","Buscá lagos curvos y marcas de antiguos cauces.","Observá los campos agrícolas alrededor del río y compará sus formas con las curvas naturales."],q:"¿Qué nos indican los lagos curvos y antiguos cauces junto al Mississippi?",opts:["Que el río ha migrado y cambiado de recorrido a lo largo del tiempo","Que el río siempre mantuvo exactamente el mismo cauce","Que esos lagos fueron excavados para formar el río"],ans:0,feedback:"Los meandros abandonados registran cómo el río se desplazó por su llanura de inundación."},
+ lakes:{title:"🧊 Grandes Lagos–San Lorenzo — Cinco gigantes conectados",image:"https://assets.science.nasa.gov/content/dam/science/esd/eo/images/imagerecords/45000/45615/greatlakes_amo_2010240_lrg.jpg",source:"https://science.nasa.gov/earth/earth-observatory/great-lakes-no-clouds-45615/",credit:"NASA Earth Observatory · Aqua/MODIS · 28 ago 2010",observe:["Intentá reconocer Superior, Michigan, Huron, Erie y Ontario.","Fijate que los lagos no aparecen como cuerpos aislados: forman una cadena conectada.","Ubicá el extremo oriental del sistema y pensá cómo continúa el agua hacia el Atlántico."],q:"¿Qué idea hidrográfica demuestra mejor esta vista?",opts:["Lagos y ríos pueden integrar una misma red de drenaje","Cada lago pertenece necesariamente a un océano diferente","Los Grandes Lagos no poseen salida hacia el mar"],ans:0,feedback:"El sistema de los Grandes Lagos continúa por el río San Lorenzo hasta el Atlántico."}
+};
 let visited=new Set(JSON.parse(localStorage.getItem("visitedBasins")||"[]"));
+let satelliteDone=new Set(JSON.parse(localStorage.getItem("satelliteEvidence")||"[]"));
 let current=null, speaking=false;
 const modal=document.getElementById("modal"), title=document.getElementById("title"), content=document.getElementById("content");
-function progress(){document.querySelectorAll(".drop").forEach((d,i)=>d.classList.toggle("on",i<visited.size));document.getElementById("count").textContent=visited.size+"/5"}
-function openBasin(k){speechSynthesis.cancel(); current=k; title.textContent=basins[k].title;content.innerHTML=basins[k].html;modal.classList.add("open");document.getElementById("collect").textContent=visited.has(k)?"✓ Cuenca registrada":"💧 Registrar esta cuenca"}
+function progress(){document.querySelectorAll(".drop").forEach((d,i)=>d.classList.toggle("on",i<visited.size));document.getElementById("count").textContent=visited.size+"/5";document.querySelectorAll(".satdot").forEach((d,i)=>d.classList.toggle("on",i<satelliteDone.size));document.getElementById("satCount").textContent=satelliteDone.size+"/5"}
+function openBasin(k){speechSynthesis.cancel(); current=k; title.textContent=basins[k].title;content.innerHTML=basins[k].html;modal.classList.add("open");document.getElementById("collect").textContent=visited.has(k)?"✓ Cuenca registrada":"💧 Registrar esta cuenca";document.getElementById("satellite").textContent=satelliteDone.has(k)?"✓ Evidencia satelital conseguida":"🛰️ Misión satelital"}
 function closeModal(){speechSynthesis.cancel();modal.classList.remove("open")}
 document.querySelectorAll(".hotspot").forEach(b=>b.onclick=()=>openBasin(b.dataset.basin));
 document.getElementById("close").onclick=closeModal;
 document.getElementById("listen").onclick=()=>{speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(basins[current].speech);u.lang="es-AR";u.rate=.94;speechSynthesis.speak(u)};
 document.getElementById("collect").onclick=()=>{visited.add(current);localStorage.setItem("visitedBasins",JSON.stringify([...visited]));progress();document.getElementById("collect").textContent="✓ Cuenca registrada";setTimeout(closeModal,700)};
-document.getElementById("help").onclick=()=>{current="amazon";title.textContent="🧭 Cómo jugar";content.innerHTML="<p>Explorá las <b>cinco cuencas principales</b> tocando el mapa. Leé o escuchá cada explicación y registrá su 💧. Cuando consigas las cinco gotas se desbloquea el desafío final.</p><p>Las ventanas se cierran por completo para que en el celular ningún control tape el mapa o el desafío.</p>";document.getElementById("listen").style.display="none";document.getElementById("collect").style.display="none";modal.classList.add("open")};
+document.getElementById("help").onclick=()=>{current="amazon";title.textContent="🧭 Cómo jugar";content.innerHTML="<p>Explorá las <b>cinco cuencas principales</b> tocando el mapa. Leé o escuchá cada explicación, completá su 🛰️ misión satelital y registrá su 💧. Las cinco gotas desbloquean el desafío final; las cinco evidencias satelitales completan la expedición desde el espacio.</p><p>Las ventanas se cierran por completo para que en el celular ningún control tape el mapa o el desafío.</p>";document.getElementById("listen").style.display="none";document.getElementById("satellite").style.display="none";document.getElementById("collect").style.display="none";modal.classList.add("open")};
 modal.addEventListener("click",e=>{if(e.target===modal)closeModal()});
-document.querySelectorAll(".hotspot").forEach(b=>b.addEventListener("click",()=>{document.getElementById("listen").style.display="block";document.getElementById("collect").style.display="block"}));
+document.querySelectorAll(".hotspot").forEach(b=>b.addEventListener("click",()=>{document.getElementById("listen").style.display="block";document.getElementById("satellite").style.display="block";document.getElementById("collect").style.display="block"}));
+
+
+const sm=document.getElementById("satModal"), satTitle=document.getElementById("satTitle"), satContent=document.getElementById("satContent");
+document.getElementById("satellite").onclick=()=>openSatellite(current);
+document.getElementById("satClose").onclick=()=>sm.classList.remove("open");
+sm.addEventListener("click",e=>{if(e.target===sm)sm.classList.remove("open")});
+function openSatellite(k){
+ const m=satellites[k]; satTitle.textContent=m.title;
+ satContent.innerHTML=`<img class="satimg" src="${m.image}" alt="Imagen satelital real para analizar la cuenca"><div class="small"><b>Fuente:</b> ${m.credit}</div><div class="observe"><b>🔎 Pistas de observación</b><ol>${m.observe.map(x=>`<li>${x}</li>`).join("")}</ol></div><div class="satq"><b>🧠 Interpretá la imagen</b><h3>${m.q}</h3><div id="satOpts"></div><div class="feedback" id="satFb"></div></div><a class="sourcebtn" href="${m.source}" target="_blank" rel="noopener">🌎 Explorar la fuente original de NASA</a>`;
+ m.opts.forEach((o,i)=>{let b=document.createElement("button");b.className="satopt";b.textContent=o;b.onclick=()=>satAnswer(k,i,b);document.getElementById("satOpts").appendChild(b)});
+ modal.classList.remove("open");sm.classList.add("open");
+}
+function satAnswer(k,i,b){
+ const m=satellites[k];document.querySelectorAll(".satopt").forEach(x=>x.disabled=true);let ok=i===m.ans;b.classList.add(ok?"correct":"wrong");document.querySelectorAll(".satopt")[m.ans].classList.add("correct");document.getElementById("satFb").textContent=(ok?"✅ ¡Evidencia interpretada! ":"🔎 Observá nuevamente: ")+m.feedback;
+ if(ok){satelliteDone.add(k);localStorage.setItem("satelliteEvidence",JSON.stringify([...satelliteDone]));progress();document.getElementById("satFb").insertAdjacentHTML("afterend",`<div class="evidence">🛰️ EVIDENCIA SATELITAL CONSEGUIDA ✓</div>${satelliteDone.size===5?'<div class="missiondone">🌎 MISIÓN SATELITAL COMPLETA<br>Observaste América como un geógrafo desde la Tierra y desde el espacio.</div>':''}`)}
+}
 
 const questions=[
 ["💧 Sigue la gota","Una gota comienza en el río Paraguay. ¿Qué recorrido podría llevarla al océano?",["Paraguay → Paraná → Río de la Plata → Atlántico","Paraguay → Amazonas → Atlántico","Paraguay → Uruguay → Pacífico"],0,"Los ríos Paraguay y Paraná forman parte de la Cuenca del Plata."],
