@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Misión: Cuencas de América</title>
+<style>
+:root{--ink:#15354a;--paper:#fff7df;--blue:#087ca7;--deep:#07516f;--gold:#f1b83a;--ok:#178a58;--bad:#b93d3d}
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#082b3a;color:#17323e}
+button{font:inherit}
+.app{min-height:100dvh;background:linear-gradient(#bde8f6,#e8f7fb)}
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:.6rem;padding:.55rem .7rem;background:rgba(255,247,223,.96);border-bottom:2px solid #9b6b2d;box-shadow:0 2px 10px #0002}
+.brand{font-weight:900;letter-spacing:.02em;flex:1}.drops{font-weight:800;white-space:nowrap}.drop{opacity:.25}.drop.on{opacity:1}
+.hero{max-width:760px;margin:auto;padding:.7rem .7rem 6.5rem}
+.stage{position:relative;border:4px solid #7d5527;border-radius:18px;overflow:hidden;background:#d8f0f5;box-shadow:0 8px 24px #0003}
+.stage img{display:block;width:100%;height:auto}
+.hotspot{position:absolute;transform:translate(-50%,-50%);width:15%;aspect-ratio:1;border:0;border-radius:999px;background:rgba(255,255,255,.06);box-shadow:0 0 0 3px rgba(255,255,255,.0);cursor:pointer}
+.hotspot:focus,.hotspot:hover{background:rgba(255,235,120,.20);box-shadow:0 0 0 3px rgba(255,255,255,.85)}
+.h-amazon{left:55%;top:55%}.h-orinoco{left:66%;top:46%}.h-plata{left:58%;top:65%}.h-miss{left:40%;top:30%}.h-lakes{left:52%;top:24%}
+.tip{text-align:center;margin:.7rem 0 0;font-weight:700}
+.actions{position:fixed;left:0;right:0;bottom:0;z-index:25;display:grid;grid-template-columns:1fr 1fr;gap:.55rem;padding:.65rem max(.65rem,env(safe-area-inset-right)) calc(.65rem + env(safe-area-inset-bottom)) max(.65rem,env(safe-area-inset-left));background:rgba(7,50,68,.96);box-shadow:0 -3px 16px #0004}
+.action{border:0;border-radius:14px;padding:.8rem .6rem;font-weight:900;background:#fff3cf;color:#17323e}
+.action.challenge{background:var(--gold)}
+.modal{position:fixed;inset:0;z-index:50;background:#0009;display:none;align-items:flex-end;justify-content:center;padding:1rem}
+.modal.open{display:flex}.card{width:min(680px,100%);max-height:88dvh;overflow:auto;background:var(--paper);border-radius:22px;border:3px solid #8b5d28;box-shadow:0 12px 40px #0006;padding:1rem}
+.cardhead{display:flex;align-items:flex-start;gap:.6rem}.card h2{margin:.1rem 0 .4rem;line-height:1.05}.close{margin-left:auto;border:0;border-radius:999px;width:42px;height:42px;background:#17323e;color:white;font-weight:900;font-size:1.2rem}
+.fact{background:#e5f6fb;border-left:5px solid var(--blue);padding:.75rem;border-radius:10px;margin:.7rem 0}
+.curio{background:#fff0b9;border-left:5px solid #d39200;padding:.75rem;border-radius:10px;margin:.7rem 0}
+.listen,.collect,.next{width:100%;border:0;border-radius:12px;padding:.8rem;margin-top:.55rem;font-weight:900}.listen{background:#d9edf7}.collect{background:#dff4e8;color:#125b3c}.next{background:var(--gold)}
+.quiz{display:none}.quiz.open{display:block}.qbox{background:white;border-radius:14px;padding:.8rem;margin:.7rem 0;border:1px solid #ccb98d}.opt{display:block;width:100%;text-align:left;margin:.45rem 0;padding:.7rem;border-radius:10px;border:1px solid #9db2bb;background:#f8fcfd}.opt.correct{background:#dff4e8;border-color:#4c9}.opt.wrong{background:#fde4e4;border-color:#d77}.feedback{font-weight:750;min-height:1.5em}.badge{text-align:center;font-size:1.1rem;font-weight:900;background:#fff0b9;border-radius:14px;padding:1rem;margin-top:1rem}
+.small{font-size:.9rem;opacity:.8}
+@media(min-width:800px){.actions{left:50%;right:auto;transform:translateX(-50%);width:min(760px,100%);border-radius:18px 18px 0 0}.modal{align-items:center}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">🌎 MISIÓN: CUENCAS DE AMÉRICA</div>
+    <div class="drops" aria-label="progreso"><span class="drop">💧</span><span class="drop">💧</span><span class="drop">💧</span><span class="drop">💧</span><span class="drop">💧</span> <b id="count">0/5</b></div>
+  </div>
+  <main class="hero">
+    <div class="stage" id="stage">
+      <img src="assets/cuencas-america.png" alt="Mapa ilustrado de las principales cuencas hidrográficas de América">
+      <button class="hotspot h-amazon" aria-label="Explorar Cuenca Amazónica" data-basin="amazon"></button>
+      <button class="hotspot h-orinoco" aria-label="Explorar Cuenca del Orinoco" data-basin="orinoco"></button>
+      <button class="hotspot h-plata" aria-label="Explorar Cuenca del Plata" data-basin="plata"></button>
+      <button class="hotspot h-miss" aria-label="Explorar Mississippi-Missouri" data-basin="miss"></button>
+      <button class="hotspot h-lakes" aria-label="Explorar Grandes Lagos-San Lorenzo" data-basin="lakes"></button>
+    </div>
+    <p class="tip">Tocá una de las cinco cuencas principales del mapa para comenzar la expedición.</p>
+  </main>
+  <div class="actions">
+    <button class="action" id="help">🧭 Cómo jugar</button>
+    <button class="action challenge" id="challenge">🏆 Desafío final</button>
+  </div>
+</div>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true">
+  <section class="card">
+    <div class="cardhead"><div><div class="small">ESTACIÓN DEL EXPLORADOR</div><h2 id="title"></h2></div><button class="close" id="close" aria-label="Cerrar">×</button></div>
+    <div id="content"></div>
+    <button class="listen" id="listen">🔊 Escuchar explicación</button>
+    <button class="collect" id="collect">💧 Registrar esta cuenca</button>
+  </section>
+</div>
+
+<div class="modal" id="quizModal" role="dialog" aria-modal="true">
+  <section class="card">
+    <div class="cardhead"><div><div class="small">MISIÓN FINAL</div><h2>🏆 Salvar las aguas de América</h2></div><button class="close" id="quizClose" aria-label="Cerrar">×</button></div>
+    <p id="lockmsg"></p>
+    <div class="quiz" id="quiz"></div>
+  </section>
+</div>
+
+<script>
+const basins={
+ amazon:{title:"🌳 Cuenca Amazónica",speech:"Exploradores, han llegado a la Cuenca Amazónica. Se encuentra en América del Sur y es la cuenca hidrográfica más extensa del mundo. Su río principal es el Amazonas, que recibe numerosos afluentes y desemboca en el océano Atlántico. Su enorme red de agua sostiene ecosistemas de extraordinaria biodiversidad. Recuerden: una cuenca no es solamente el río principal, sino todo el territorio cuyas aguas drenan hacia una red hidrográfica.",
+ html:`<div class="fact"><b>📍 Ubicación:</b> América del Sur.<br><b>🌊 Río principal:</b> Amazonas.<br><b>🌊 Vertiente:</b> Atlántica.</div><div class="curio"><b>🔎 Dato del explorador:</b> su enorme extensión y caudal la convierten en un sistema hidrográfico excepcional. Una cuenca incluye el río principal, sus afluentes y el territorio que aporta agua al sistema.</div><p><b>🧠 Para pensar:</b> dos gotas pueden caer muy lejos una de otra y terminar en el mismo río porque distintos afluentes las conducen hacia la red principal.</p>`},
+ orinoco:{title:"🐊 Cuenca del Orinoco",speech:"La Cuenca del Orinoco ocupa principalmente territorios de Venezuela y Colombia y vierte sus aguas hacia el Atlántico. Guarda una curiosidad geográfica extraordinaria: el Casiquiare establece una conexión natural entre los sistemas del Orinoco y del Amazonas. Esto demuestra que las redes hidrográficas pueden presentar relaciones mucho más complejas de lo que parece en un mapa sencillo.",
+ html:`<div class="fact"><b>📍 Ubicación:</b> norte de América del Sur, principalmente Venezuela y Colombia.<br><b>🌊 Río principal:</b> Orinoco.<br><b>🌊 Vertiente:</b> Atlántica.</div><div class="curio"><b>🔎 ¿Sabías que...?</b> el Casiquiare constituye una conexión natural entre los sistemas del Orinoco y del Amazonas.</div><p><b>🧠 Pregunta clave:</b> ¿dos grandes sistemas fluviales siempre están totalmente aislados? El caso del Casiquiare demuestra que no necesariamente.</p>`},
+ plata:{title:"🇦🇷 Cuenca del Plata",speech:"La Cuenca del Plata integra grandes ríos como el Paraná, Paraguay y Uruguay. Sus aguas alcanzan el Río de la Plata y finalmente el océano Atlántico. Es un sistema internacional de enorme importancia para la navegación, las actividades económicas, los ecosistemas y la población. Para comprenderla hay que pensar en conexiones: un curso interior puede comunicar territorios alejados de la costa con el océano.",
+ html:`<div class="fact"><b>🌊 Grandes sistemas:</b> Paraná, Paraguay y Uruguay.<br><b>🌊 Salida:</b> Río de la Plata → océano Atlántico.</div><div class="curio"><b>🔎 Dato del explorador:</b> el Río de la Plata es la salida de un sistema muchísimo mayor. Cuenca y río no significan lo mismo.</div><p><b>🧠 Ruta posible:</b> Paraguay → Paraná → Río de la Plata → Atlántico. Esto ayuda a comprender la importancia de los corredores fluviales.</p>`},
+ miss:{title:"🚢 Mississippi–Missouri",speech:"El Mississippi y el Missouri forman uno de los grandes sistemas fluviales de América del Norte. Aquí aparece una sorpresa: un afluente puede ser más largo que el río al que desemboca. El Missouri es más largo que el Mississippi si se comparan individualmente. La cuenca también tiene enorme importancia para la agricultura, las ciudades, la navegación y el transporte.",
+ html:`<div class="fact"><b>📍 Ubicación:</b> América del Norte.<br><b>🌊 Sistema:</b> Mississippi–Missouri.<br><b>🌊 Vertiente:</b> golfo de México, conectado con el Atlántico.</div><div class="curio"><b>🔎 Dato curioso:</b> el Missouri es más largo que el Mississippi medido por separado, aunque desemboca en él como afluente.</div><p><b>🧠 Idea desafiante:</b> el curso que da nombre a una cuenca no tiene por qué ser más largo que todos sus afluentes.</p>`},
+ lakes:{title:"🧊 Grandes Lagos–San Lorenzo",speech:"Los Grandes Lagos forman una enorme red de agua dulce conectada con el río San Lorenzo. Una gota que entra en este sistema puede recorrer lagos y cursos fluviales hasta alcanzar el océano Atlántico. Este ejemplo permite comprender que lagos y ríos pueden integrar una misma red de drenaje y que los sistemas hidrográficos atraviesan fronteras políticas.",
+ html:`<div class="fact"><b>🌊 Sistema:</b> Grandes Lagos → río San Lorenzo → Atlántico.<br><b>🗺️ Característica:</b> red compartida por Canadá y Estados Unidos.</div><div class="curio"><b>🔎 Dato del explorador:</b> los Grandes Lagos reúnen una parte extraordinariamente grande del agua dulce superficial del planeta.</div><p><b>🧠 Sigue la gota:</b> una gota del sistema puede terminar llegando al Atlántico por el San Lorenzo.</p>`}
+};
+let visited=new Set(JSON.parse(localStorage.getItem("visitedBasins")||"[]"));
+let current=null, speaking=false;
+const modal=document.getElementById("modal"), title=document.getElementById("title"), content=document.getElementById("content");
+function progress(){document.querySelectorAll(".drop").forEach((d,i)=>d.classList.toggle("on",i<visited.size));document.getElementById("count").textContent=visited.size+"/5"}
+function openBasin(k){speechSynthesis.cancel(); current=k; title.textContent=basins[k].title;content.innerHTML=basins[k].html;modal.classList.add("open");document.getElementById("collect").textContent=visited.has(k)?"✓ Cuenca registrada":"💧 Registrar esta cuenca"}
+function closeModal(){speechSynthesis.cancel();modal.classList.remove("open")}
+document.querySelectorAll(".hotspot").forEach(b=>b.onclick=()=>openBasin(b.dataset.basin));
+document.getElementById("close").onclick=closeModal;
+document.getElementById("listen").onclick=()=>{speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(basins[current].speech);u.lang="es-AR";u.rate=.94;speechSynthesis.speak(u)};
+document.getElementById("collect").onclick=()=>{visited.add(current);localStorage.setItem("visitedBasins",JSON.stringify([...visited]));progress();document.getElementById("collect").textContent="✓ Cuenca registrada";setTimeout(closeModal,700)};
+document.getElementById("help").onclick=()=>{current="amazon";title.textContent="🧭 Cómo jugar";content.innerHTML="<p>Explorá las <b>cinco cuencas principales</b> tocando el mapa. Leé o escuchá cada explicación y registrá su 💧. Cuando consigas las cinco gotas se desbloquea el desafío final.</p><p>Las ventanas se cierran por completo para que en el celular ningún control tape el mapa o el desafío.</p>";document.getElementById("listen").style.display="none";document.getElementById("collect").style.display="none";modal.classList.add("open")};
+modal.addEventListener("click",e=>{if(e.target===modal)closeModal()});
+document.querySelectorAll(".hotspot").forEach(b=>b.addEventListener("click",()=>{document.getElementById("listen").style.display="block";document.getElementById("collect").style.display="block"}));
+
+const questions=[
+["💧 Sigue la gota","Una gota comienza en el río Paraguay. ¿Qué recorrido podría llevarla al océano?",["Paraguay → Paraná → Río de la Plata → Atlántico","Paraguay → Amazonas → Atlántico","Paraguay → Uruguay → Pacífico"],0,"Los ríos Paraguay y Paraná forman parte de la Cuenca del Plata."],
+["🌳 El gigante del agua","¿Por qué se destaca mundialmente el Amazonas?",["Porque no posee afluentes","Por su extraordinario caudal y la enorme extensión de su cuenca","Porque desemboca en el Pacífico"],1,"El Amazonas recibe numerosos afluentes y desemboca en el Atlántico."],
+["🕵️ Descubrí el error","“Como el Missouri es afluente del Mississippi, necesariamente debe ser más corto”.",["Correcto: todos los afluentes son más cortos","Incorrecto: el Missouri es más largo medido por separado","Correcto: porque el Mississippi llega al océano"],1,"Ser afluente no implica necesariamente ser más corto."],
+["🐊 El pasadizo secreto","¿Qué curso establece una conexión natural entre los sistemas Orinoco y Amazonas?",["Canal de Panamá","Casiquiare","Río de la Plata"],1,"El Casiquiare es una singular conexión hidrográfica natural."],
+["🧊 Sigue la gota","¿Una gota del sistema de los Grandes Lagos puede llegar al Atlántico?",["No, queda encerrada","Sí, mediante el río San Lorenzo","Solo puede llegar al Pacífico"],1,"El San Lorenzo conecta el sistema de los Grandes Lagos con el Atlántico."],
+["🚢 Misión comercial","¿Por qué los grandes ríos de la Cuenca del Plata son importantes para la economía?",["Pueden funcionar como vías de navegación y transporte","Impiden las actividades económicas","Todos desembocan directamente en el Pacífico"],0,"Los corredores fluviales permiten conectar áreas interiores con otros mercados."],
+["🌧️ ¿Qué ocurriría si...?","Si llueve intensamente durante meses en amplias zonas de una cuenca, ¿qué podría ocurrir aguas abajo?",["Nada: cada sector está aislado","Aumentar los caudales y producirse inundaciones","Los ríos dejarían de desembocar"],1,"Una cuenca funciona como un sistema conectado."],
+["🔥 Río o cuenca","¿Cuál afirmación es correcta?",["Río y cuenca significan exactamente lo mismo","Una cuenca comprende el territorio cuyas aguas drenan hacia una red fluvial","Una cuenca es solamente el cauce principal"],1,"La cuenca incluye territorio, afluentes y red de drenaje."],
+["🔥 Vertientes","¿Qué comparten Amazonas, Orinoco, Mississippi y el sistema del Plata?",["Sus aguas se vinculan con la vertiente atlántica","Todos atraviesan Argentina","Todos pertenecen a América del Norte"],0,"Aunque están muy alejados, todos terminan drenando hacia mares vinculados al Atlántico."],
+["🔥 Desafío del geógrafo","¿Por qué un problema ambiental aguas arriba puede afectar territorios aguas abajo?",["Porque agua y materiales circulan por la red hidrográfica","Porque toda la cuenca tiene el mismo clima","Porque todas las cuencas tienen un solo río"],0,"Lo que ocurre en una parte de la red puede propagarse hacia otros sectores conectados."]
+];
+const qm=document.getElementById("quizModal"), quiz=document.getElementById("quiz"), lock=document.getElementById("lockmsg");
+document.getElementById("challenge").onclick=()=>{qm.classList.add("open"); if(visited.size<5){lock.innerHTML=`🔒 Te faltan <b>${5-visited.size}</b> gotas. Explorá las cinco estaciones para desbloquear la misión.`;quiz.classList.remove("open")}else{lock.textContent="¡Cinco gotas recuperadas! Superá las 10 pruebas.";startQuiz()}};
+document.getElementById("quizClose").onclick=()=>qm.classList.remove("open");
+qm.addEventListener("click",e=>{if(e.target===qm)qm.classList.remove("open")});
+function startQuiz(){quiz.classList.add("open");let idx=0,score=0;render();
+ function render(){if(idx>=questions.length){let rank=score>=9?"🏆 MAESTRO/A DE LAS AGUAS DE AMÉRICA":score>=7?"💧 GUARDIÁN DE LAS CUENCAS":"🌊 EXPLORADOR DE RÍOS";quiz.innerHTML=`<div class="badge">${rank}<br><br>${score}/10 respuestas correctas${score===10?"<br><br>⭐ INSIGNIA DESBLOQUEADA: HIDRÓLOGO EXPERTO":""}</div>`;return}
+ let q=questions[idx];quiz.innerHTML=`<div class="qbox"><b>${idx+1}/10 · ${q[0]}</b><h3>${q[1]}</h3><div id="opts"></div><div class="feedback" id="fb"></div><button class="next" id="next" style="display:none">Siguiente →</button></div>`;
+ q[2].forEach((o,i)=>{let b=document.createElement("button");b.className="opt";b.textContent=o;b.onclick=()=>answer(i,b);document.getElementById("opts").appendChild(b)});
+ function answer(i,b){document.querySelectorAll(".opt").forEach(x=>x.disabled=true);let ok=i===q[3];if(ok)score++;b.classList.add(ok?"correct":"wrong");document.querySelectorAll(".opt")[q[3]].classList.add("correct");document.getElementById("fb").textContent=(ok?"✅ ¡Correcto! ":"🔎 Revisá esta idea: ")+q[4];document.getElementById("next").style.display="block"}
+ document.getElementById("next").onclick=()=>{idx++;render()}
+ }}
+progress();
+</script>
+</body>
+</html>
